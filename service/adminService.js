@@ -8,8 +8,6 @@ const { formatRespone } = require('../utils/tool');
 module.exports.loginService = async loginInfo => {
   loginInfo.loginPwd = md5(loginInfo.loginPwd);
   var data = await loginDao(loginInfo);
-  console.log(data, 'data>>>>>');
-
   if (data && data.dataValues) {
     var { id, loginId, loginPwd, remember } = data.dataValues;
     // 处理是否7天免登录，如果没有则为1天

@@ -5,6 +5,13 @@ const sequelize = require('../dbConnect');
 module.exports = sequelize.define(
   'admin',
   {
+    // 主键 ID
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      comment: '用户ID',
+    },
     loginId: {
       type: DataTypes.STRING,
       allowNull: false,

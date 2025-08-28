@@ -1,11 +1,55 @@
 // 模型同步初始化
 const sequelize = require('./dbConnect');
 const Admin = require('./model/adminModel');
+const BlogCategory = require('./model/blogCategoryModel');
+const Blog = require('./model/blogModel');
 const md5 = require('md5');
 
 (async () => {
-  await sequelize.sync({ alert: true });
-  // 初始化数据
+  // 同步模型
+  syncModel();
+  relationModel();
+  initData();
+})();
+
+async function syncModel() {
+  try {
+    await sequelize.sync({ alter: true });
+    console.log('\n✅ 所有模型均已成功同步');
+  } catch (error) {
+    console.error('\n❌ 同步过程出错：', error.message);
+  }
+}
+
+// 关联模型
+function relationModel() {
+  // 将管理员表和博客分类表关联起来，一对多关系
+  Admin.hasMany(BlogCategory, {
+    foreignKey: 'user_id', // 对应博客表中的外键字段
+    sourceKey: 'id', // 用户表中用于关联的字段（主键）
+    onDelete: 'CASCADE',
+    as: 'category', // 关联查询时的别名
+  });
+  BlogCategory.belongsTo(Admin, {
+    foreignKey: 'user_id', // 对应博客表中的外键字段
+    sourceKey: 'id', // 用户表中用于关联的字段（主键）
+  });
+  /****************博客和用户 */
+  Admin.hasMany(Blog, {
+    foreignKey: 'user_id', // 对应博客表中的外键字段
+    sourceKey: 'id', // 用户表中用于关联的字段（主键）
+    onDelete: 'CASCADE',
+    as: 'blog', // 关联查询时的别名
+  });
+  Blog.belongsTo(Admin, {
+    foreignKey: 'user_id', // 对应博客表中的外键字段
+    sourceKey: 'id', // 用户表中用于关联的字段（主键）
+    as: 'author',
+  });
+}
+
+// 初始化数据
+async function initData() {
   const adminCount = await Admin.count();
   if (!adminCount) {
     await Admin.create({
@@ -14,5 +58,13 @@ const md5 = require('md5');
       loginPwd: md5('123456'),
     });
   }
-  console.log(`数据库初始化完成...`);
-})();
+  // 初始博客分类
+  const blogCategoryCount = await BlogCategory.count();
+  if (!blogCategoryCount) {
+    await BlogCategory.create({
+      name: '默认分类',
+      userId: 1,
+    });
+  }
+  console.log('\n✅ 数据库初始化完成');
+}

@@ -16,6 +16,9 @@ require('./dao/db');
 
 var adminRouter = require('./routes/admin');
 var captchaRouter = require('./routes/captcha');
+var uploadRouter = require('./routes/upload');
+var blogCategoryRouter = require('./routes/blogCategory');
+var blogRouter = require('./routes/blog');
 
 var app = express();
 
@@ -41,6 +44,7 @@ app.use(
     path: [
       { url: '/api/admin/login', methods: ['POST'] },
       { url: '/res/captcha', methods: ['GET'] },
+      { url: '/api/upload-image', methods: ['POST'] },
     ],
   })
 );
@@ -48,6 +52,9 @@ app.use(
 // 路由
 app.use('/api/admin', adminRouter);
 app.use('/res/captcha', captchaRouter);
+app.use('/api/upload-image', uploadRouter);
+app.use('/api/categories', blogCategoryRouter);
+app.use('/api/blog', blogRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -56,6 +63,8 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
+  console.log(err);
+
   if (err.name === 'UnauthorizedError') {
     res.send(new ForbiddenError('无效的Token').toResponeJSON());
   } else if (err instanceof ServiceError) {
