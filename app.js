@@ -19,6 +19,7 @@ var captchaRouter = require('./routes/captcha');
 var uploadRouter = require('./routes/upload');
 var blogCategoryRouter = require('./routes/blogCategory');
 var blogRouter = require('./routes/blog');
+var commentRouter = require('./routes/comment');
 
 var app = express();
 
@@ -55,6 +56,7 @@ app.use('/res/captcha', captchaRouter);
 app.use('/api/upload-image', uploadRouter);
 app.use('/api/categories', blogCategoryRouter);
 app.use('/api/blog', blogRouter);
+app.use('/api/comment', commentRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

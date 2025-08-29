@@ -23,6 +23,12 @@ module.exports.queryBlog = async params => {
 };
 
 module.exports.fetchBlogsById = async id => {
-  const blogDetail = await fetchBlogsById(id);
-  return formatRespone(0, '', blogDetail);
+  const blog = await fetchBlogsById(id);
+  if (!blog) {
+    return formatRespone(-1, '文章不存在');
+  }
+  // 2. 增加浏览量（原子操作，避免并发问题）
+  await blog.increment('view_count', { by: 1 });
+  await blog.reload();
+  return formatRespone(0, '', blog);
 };

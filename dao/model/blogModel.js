@@ -45,7 +45,7 @@ module.exports = sequelize.define(
       comment: '封面图URL',
     },
     view_count: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
       comment: '阅读量',
     },

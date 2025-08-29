@@ -28,7 +28,7 @@ module.exports.loginService = async loginInfo => {
       { id: data.id, loginId: data.loginId },
       md5(process.env.JWT_SERCET),
       {
-        expiresIn: 60 * 60 * 24 * loginRemember,
+        expiresIn: `${loginRemember}d`,
       }
     );
 

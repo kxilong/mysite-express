@@ -3,12 +3,13 @@ const sequelize = require('./dbConnect');
 const Admin = require('./model/adminModel');
 const BlogCategory = require('./model/blogCategoryModel');
 const Blog = require('./model/blogModel');
+const Comment = require('./model/commentModel');
 const md5 = require('md5');
 
 (async () => {
+  relationModel();
   // 同步模型
   syncModel();
-  relationModel();
   initData();
 })();
 
@@ -31,20 +32,31 @@ function relationModel() {
     as: 'category', // 关联查询时的别名
   });
   BlogCategory.belongsTo(Admin, {
-    foreignKey: 'user_id', // 对应博客表中的外键字段
-    sourceKey: 'id', // 用户表中用于关联的字段（主键）
+    foreignKey: 'user_id',
+    sourceKey: 'id',
   });
   /****************博客和用户 */
   Admin.hasMany(Blog, {
-    foreignKey: 'user_id', // 对应博客表中的外键字段
-    sourceKey: 'id', // 用户表中用于关联的字段（主键）
+    foreignKey: 'user_id',
+    sourceKey: 'id',
     onDelete: 'CASCADE',
-    as: 'blog', // 关联查询时的别名
+    as: 'blog',
   });
   Blog.belongsTo(Admin, {
-    foreignKey: 'user_id', // 对应博客表中的外键字段
-    sourceKey: 'id', // 用户表中用于关联的字段（主键）
+    foreignKey: 'user_id',
+    sourceKey: 'id',
     as: 'author',
+  });
+  /******博客和评论 */
+  Blog.hasMany(Comment, {
+    foreignKey: 'blog_id',
+    sourceKey: 'id',
+    onDelete: 'CASCADE',
+    as: 'comment',
+  });
+  Comment.belongsTo(Blog, {
+    foreignKey: 'blog_id',
+    sourceKey: 'id',
   });
 }
 
